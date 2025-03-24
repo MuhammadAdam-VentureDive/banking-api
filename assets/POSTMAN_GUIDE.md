@@ -1,153 +1,115 @@
-# Postman Guide for Banking API
+# Banking API - Postman Collection Guide
 
-This guide provides instructions for setting up and using the Postman collection for testing and exploring the Banking API.
+This guide explains how to use the Banking API Postman collection to interact with the API endpoints.
 
 ## Getting Started
 
-### Prerequisites
+1. Download [Postman](https://www.postman.com/downloads/) if you haven't already
+2. Import the `banking-api-postman-collection.json` file into Postman:
+   - Open Postman
+   - Click "Import" in the top left
+   - Drag and drop the collection file or browse to select it
+   - Click "Import"
 
-1. [Postman](https://www.postman.com/downloads/) installed on your machine
-2. Banking API running locally or on a server
+## Setting Up Environment Variables
 
-### Importing the Collection
+Before using the collection, you should set up environment variables:
 
-1. Open Postman
-2. Click the "Import" button in the top left corner
-3. Select the `banking-api-postman-collection.json` file from this directory
-4. Click "Import"
-
-### Setting Up Environment Variables
-
-1. Click the "Import" button again
-2. Select the `banking-api-postman-environment.json` file
-3. Click "Import"
-4. In the top right corner of Postman, select the "Banking API" environment from the dropdown
-
-## Environment Variables
-
-The collection uses the following environment variables:
-
-- `baseUrl`: The base URL of the API (default: `http://localhost:3000/api`)
-- `accessToken`: JWT access token (automatically set during authentication)
-- `refreshToken`: JWT refresh token (automatically set during authentication)
-- `userId`: The ID of the currently authenticated user (automatically set)
-- `checkoutId`: ID of a created checkout session (automatically set)
-- `paymentId`: ID of a created payment (automatically set)
+1. Click the "Environments" tab in Postman
+2. Click "Create New Environment" and give it a name (e.g., "Banking API - Local")
+3. Add the following variable:
+   - `baseUrl`: `http://localhost:3000/api` (or your server URL)
+4. Save the environment and select it from the environment dropdown in the top right corner
 
 ## Authentication Flow
 
-Before using the API endpoints, you need to authenticate:
+Many endpoints require authentication. Follow these steps to authenticate:
 
-1. Go to the "Auth" folder in the collection
-2. Send the "Register" request with your details (if you don't have an account)
-   ```json
-   {
-     "email": "your.email@example.com",
-     "username": "your_username",
-     "fullName": "Your Name",
-     "password": "your_password"
-   }
-   ```
-3. Send the "Login" request with your credentials
-   ```json
-   {
-     "email": "your.email@example.com",
-     "password": "your_password"
-   }
-   ```
-4. The collection will automatically save the access and refresh tokens
+1. Use the "Register" endpoint to create a new user account
+2. Use the "Login" endpoint to obtain an access token
+3. The `accessToken` variable will be automatically set if you have the following test script in the Login request:
 
-If your access token expires, use the "Refresh Token" endpoint to get a new one.
+```javascript
+// Add this to the Tests tab in the Login request
+var jsonData = pm.response.json();
+pm.environment.set("accessToken", jsonData.accessToken);
+pm.environment.set("refreshToken", jsonData.refreshToken);
+```
 
-## Using Pre-request Scripts
+## API Endpoints Overview
 
-Many requests in the collection use pre-request scripts to:
-
-1. Ensure authentication is valid
-2. Set required parameters
-3. Prepare request data
-
-These scripts run automatically before each request.
-
-## Testing with the Collection
+### Auth Endpoints
+- **Register**: Create a new user account
+- **Login**: Authenticate and get access tokens
+- **Refresh Token**: Get new access token using refresh token
 
 ### User Endpoints
+- **Get User Profile**: Retrieve user information
+- **Update User Profile**: Update user information
+- **Get Wallet Balance**: Get user's wallet balances (GBP, crypto, tokens)
 
-The "Users" folder contains endpoints for:
-- Getting the current user's profile
-- Viewing wallet balances
-- Updating profile information
+### Card Endpoints
+- **Get User Cards**: Retrieve all user's cards
+- **Get Card by ID**: Get details of a specific card
+- **Add New Card**: Add a new card to the user's account
+- **Update Card**: Update card information (e.g., set as default)
+- **Delete Card**: Remove a card from the user's account
 
-### Card Management
+### Checkout Endpoints
+- **Create Checkout**: Start a new checkout process
+- **Get Checkout by ID**: Retrieve checkout details
+- **Select Payment Method**: Choose a payment method for checkout
 
-The "Cards" folder contains endpoints for:
-- Adding a new payment card
-- Listing all cards
-- Setting a default card
-- Deleting a card
+### Payment Endpoints
+- **Create Payment**: Process payment for a checkout
+- **Get Payment by ID**: Get details of a specific payment
+- **Get User Payments**: Retrieve all user's payments
 
-### Checkout Process
+### Receipt Endpoints
+- **Get Receipt by ID**: Get details of a specific receipt
+- **Get User Receipts**: Retrieve all user's receipts
+- **Send Receipt Email**: Send a receipt to user's email
 
-The "Checkouts" folder contains endpoints for:
-- Creating a new checkout session
-- Selecting a payment method
-- Getting checkout status
+### Notification Endpoints
+- **Get User Notifications**: Retrieve all user's notifications
+- **Mark Notification as Read**: Mark a specific notification as read
+- **Mark All Notifications as Read**: Mark all notifications as read
 
-### Payment Processing
+### Review Endpoints
+- **Create Review**: Submit a review for a payment
+- **Get User Reviews**: Retrieve all reviews created by the user
+- **Get Review by ID**: Get details of a specific review
+- **Update Review**: Modify an existing review
 
-The "Payments" folder lets you:
-- Process payments using different methods
-- Check payment status
-- View payment history
+## Working with Dynamic Variables
 
-### Receipts
+The collection uses Postman variables to store resource IDs. After creating resources with POST requests, the IDs will be automatically captured if you add the appropriate test scripts:
 
-The "Receipts" folder contains endpoints for:
-- Retrieving transaction receipts
-- Sending receipts via email
+```javascript
+// Example for capturing a card ID after creation
+var jsonData = pm.response.json();
+pm.environment.set("cardId", jsonData.id);
+```
 
-### Notifications
+## Typical Workflow Example
 
-The "Notifications" folder contains endpoints for:
-- Listing user notifications
-- Marking notifications as read
-
-### Reviews
-
-The "Reviews" folder contains endpoints for:
-- Submitting merchant reviews
-- Viewing and editing reviews
-
-## Response Examples
-
-Each request in the collection includes example responses to help you understand the expected data format.
+1. Register a new user
+2. Login to get access token
+3. Add a new card
+4. Create a checkout
+5. Select a payment method
+6. Process the payment
+7. View the receipt
+8. Submit a review
 
 ## Troubleshooting
 
-If you encounter issues:
+If you encounter errors:
 
-1. Ensure the API server is running
-2. Check that environment variables are properly set
-3. Verify your access token is valid
-4. Look for error messages in the response
+1. Ensure the server is running
+2. Check that the `baseUrl` environment variable is correct
+3. Verify you have a valid access token for protected endpoints
+4. Check request payloads for correct formatting
+5. Look for error messages in the response body
 
-## Advanced Usage
-
-### Collection Runner
-
-You can use Postman's Collection Runner to run a series of requests in sequence, which is helpful for testing entire workflows.
-
-### Newman CLI
-
-For automated testing, you can use Newman (Postman's CLI):
-
-```bash
-npm install -g newman
-newman run banking-api-postman-collection.json -e banking-api-postman-environment.json
-```
-
-## API Rate Limits
-
-Be aware of the API's rate limits:
-- 100 requests per minute for authenticated users
-- 20 requests per minute for unauthenticated users 
+For persistent issues, check the server logs or contact the API administrator. 

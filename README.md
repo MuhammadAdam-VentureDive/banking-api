@@ -156,26 +156,6 @@ The database schema is available as both an editable Draw.io file and a static i
 - `assets/banking-api-schema.drawio` - Editable version (Open at [draw.io](https://app.diagrams.net/))
 - `assets/banking-api-schema.png` - Static image
 
-## Key Features
-
-### Multi-Wallet Support
-Users have access to multiple wallets (GBP, crypto, SN tokens) for flexible payment options.
-
-### Secure Card Management
-Store and manage payment cards with encrypted card details and PCI compliance.
-
-### Checkout System
-Create checkout sessions for merchant transactions with flexible payment method selection.
-
-### Transaction Receipts
-Generate detailed receipts for all transactions with optional email delivery.
-
-### Notification System
-Integrated notification system to keep users informed about transactions and account activities.
-
-### Merchant Reviews
-Allow users to submit reviews for merchants after completing transactions.
-
 ## Scripts
 
 - `npm run start` - Start the application
